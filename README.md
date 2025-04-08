@@ -43,6 +43,12 @@ While building **TravelPlanner**, I learned:
 
 ---
 
+## ⚙ Example
+<p align="left">
+<img width=400 src="example.png" alt="Trip Example">
+</p>
+
+
 ## ⚖ License
 
 This project is licensed under the  
