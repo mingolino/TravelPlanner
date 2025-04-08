@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <title>travelPlanner</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dom-to-image/2.6.0/dom-to-image.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script>
+        function changeImage(event) {
+            const fileInput = document.createElement('input');
+            fileInput.type = 'file';
+            fileInput.accept = 'image/*';
+            fileInput.onchange = () => {
+                const file = fileInput.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = () => {
+                        event.target.src = reader.result;
+                    };
+                    reader.readAsDataURL(file);
+                }
+            };
+            fileInput.click();
+        }
+
+        function addContainer() {
+            console.log("Clicked")
+            const parentContainer = document.getElementById('parentContainer');
+            const firstContainer = parentContainer.querySelector('.container');
+            const newContainer = firstContainer.cloneNode(true);
+            parentContainer.insertBefore(newContainer, parentContainer.querySelector('.BUTTONS'));
+
+            // Attach event listener to the new image in the cloned container
+            const images = newContainer.querySelectorAll('img');
+            images.forEach(img => {
+                img.onclick = changeImage;
+            });
+
+            // Attach event listener to the new rectangle in the cloned container
+            const rectangles = newContainer.querySelectorAll('.rectangle');
+            rectangles.forEach(rect => {
+                rect.onclick = changeRectangleColor;
+            });
+        }
+
+        function removeContainer() {
+            const parentContainer = document.getElementById('parentContainer');
+            const containers = parentContainer.querySelectorAll('.container');
+            if (containers.length > 1) {
+                parentContainer.removeChild(containers[containers.length - 1]);
+            }
+        }
+
+        function changeRectangleColor(event) {
+            const colorInput = document.createElement('input');
+            colorInput.type = 'color';
+            colorInput.style.position = 'fixed';
+            colorInput.style.right = '10px';
+            colorInput.style.top = `${event.clientY}px`;
+            colorInput.onchange = () => {
+                event.target.style.backgroundColor = colorInput.value;
+                document.body.removeChild(colorInput);
+            };
+            document.body.appendChild(colorInput);
+        }
+
+        function removeLastTransition() {
+            const parentContainer = document.getElementById('parentContainer');
+            const containers = parentContainer.querySelectorAll('.container');
+            const lastContainer = containers[containers.length - 1];
+
+            // Remove the two last elements with class "separator"
+            const separators = lastContainer.querySelectorAll('.separator');
+            if (separators.length > 1) {
+                separators[separators.length - 1].parentNode.removeChild(separators[separators.length - 1]);
+                separators[separators.length - 2].parentNode.removeChild(separators[separators.length - 2]);
+            }
+
+            // Remove the last div with class "item"
+            const items = lastContainer.querySelectorAll('.item');
+            if (items.length > 0) {
+                items[items.length - 1].parentNode.removeChild(items[items.length - 1]);
+            }
+
+            // Remove divs with classes "tPoint1", "tPoint2", and "tPoint3"
+            const tPointClasses = ['tPoint1', 'tPoint2', 'tPoint3'];
+            tPointClasses.forEach(className => {
+                const element = lastContainer.querySelector(`.${className}`);
+                if (element) {
+                    element.parentNode.removeChild(element);
+                }
+            });
+
+            // Remove the div with class "clock"
+            const clockElement = lastContainer.querySelector('.clock');
+            if (clockElement) {
+                clockElement.parentNode.removeChild(clockElement);
+            };
+        }
+
+        /* function download() {
+            const parentContainer = document.getElementById('parentContainer');
+            html2canvas(document.body, { scale: 2, useCORS: true, backgroundColor: "#202023" }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = 'containers.png';
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            });
+        } */
+
+        /* function download() {
+            const parentContainer = document.getElementById('parentContainer');
+            const clone = parentContainer.cloneNode(true);
+
+            // Remplace contenteditable par du texte statique
+            clone.querySelectorAll('[contenteditable]').forEach(el => {
+                const text = el.innerText;
+                el.removeAttribute('contenteditable');
+                el.innerText = text;
+            });
+
+            // Ajout du clone au DOM temporairement
+            document.body.appendChild(clone);
+
+            html2canvas(clone, { scale: 2, useCORS: true, backgroundColor: "#202023" }).then(canvas => {
+                document.body.removeChild(clone); // Nettoyage
+                const link = document.createElement('a');
+                link.download = 'containers.png';
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            });
+        }
+ */
+        function download() {
+            const parentContainer = document.getElementById('parentContainer');
+
+            // Options pour inclure les styles et ajuster la qualité
+            const options = {
+                bgcolor: "#202023", // Couleur de fond pour éviter la transparence
+                style: {
+                    transform: "scale(2)", // Double la résolution
+                    transformOrigin: "top left", // Assure une bonne mise à l'échelle
+                },
+                width: parentContainer.offsetWidth * 2, // Largeur doublée
+                height: parentContainer.offsetHeight * 2, // Hauteur doublée
+            };
+
+            // Génération de l'image avec dom-to-image
+            domtoimage.toBlob(parentContainer, options).then((blob) => {
+                const link = document.createElement('a');
+                link.download = 'containers.png';
+                link.href = URL.createObjectURL(blob);
+                link.click();
+            }).catch((error) => {
+                console.error('Erreur lors de la génération de l\'image:', error);
+            });
+        }
+
+
+
+
+        window.onload = function() {
+            // Attach event listener to all images
+            const images = document.querySelectorAll('img');
+            images.forEach(img => {
+                img.onclick = changeImage;
+            });
+
+            // Attach event listener to all rectangles
+            const rectangles = document.querySelectorAll('.rectangle');
+            rectangles.forEach(rect => {
+                rect.onclick = changeRectangleColor;
+            });
+        }
+
+    </script>
+</head>
+<body>
+    <div id="parentContainer" class="parent-container">
+        <div class="container">
+            <div class="rectangle">
+                <div class="rondhaut">
+                    <img src="icons/airbnb.webp" class="rondhaut">
+                </div>
+                <div class="rondbas"></div>
+                <div class="tPoint1"></div>
+                <div class="tPoint2"></div>
+                <div class="clock">
+                    <img src="icons/clock.png" class="clock">
+                </div>
+                <div class="tPoint3"></div>
+            </div>
+            <div class="texte">
+                <div class="item">
+                    <div class="details">
+                        <p class="title" contenteditable="true">Start</p>
+                        <p class="subtitle" contenteditable="true">Description example</p>
+                    </div>
+                    <div class="time" contenteditable="true">00:00</div>
+                </div>
+                <div class="separator"></div>
+                <div class="item">
+                    <div class="details">
+                        <p class="titleTrajet" contenteditable="true">Temps de trajet : 1 h 00</p>
+                    </div>
+                </div>
+                <div class="separator2"></div>
+                <div class="item">
+                    <div class="details">
+                        <p class="title" contenteditable="true">Destination</p>
+                        <p class="subtitle" contenteditable="true">Description example</p>
+                    </div>
+                    <div class="time" contenteditable="true">01:00</div>
+                </div>
+                <div class="separator"></div>
+                <div class="item">
+                    <div class="details">
+                        <p class="titleTrajet" contenteditable="true">Attendre maximum 1 h 00</p>
+                    </div>
+                </div>
+                <div class="separator"></div>
+            </div>
+        </div>
+        <div class="BUTTONS">
+            <button class="Btn" onclick="addContainer()" title="Add route">+</button>
+            <button class="Btn" onclick="removeContainer()" title="Remove last route">-</button>
+            <button class="Btn" onclick="removeLastTransition()" title="Remove last transition">~</button>
+            <button class="Btn" onclick="download()" title="Download trip">˅</button>
+        </div>
+    </div>
+    <!-- <img src="Aller Aout.png"> -->
+
+</body>
+</html>
