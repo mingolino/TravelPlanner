@@ -43,7 +43,7 @@ While building **TravelPlanner**, I learned:
 
 ---
 
-## 🪪 License
+## ⚖ License
 
 This project is licensed under the  
 **Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)**.
@@ -56,4 +56,4 @@ Under the following terms:
 - **NonCommercial** — You may not use the material for commercial purposes.
 - **NoDerivatives** — If you remix, transform, or build upon the material, you may not distribute the modified material.
 
-See the LICENSE file for the full text.
+See the [LICENSE](https://github.com/mingolino/TravelPlanner/edit/main/LICENSE) file for the full text.
